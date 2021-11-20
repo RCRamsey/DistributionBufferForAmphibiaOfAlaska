@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "- [](#words-words)",
   "main": "index.js",
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/RCRamsey/DistributionBufferForAmphibiaOfAlaska.git"
   },
-  "author": "",
+  "author": "RC Ramsey",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/RCRamsey/DistributionBufferForAmphibiaOfAlaska/issues"
