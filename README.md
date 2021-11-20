@@ -1,6 +1,6 @@
 # DistributionBufferForAmphibiaOfAlaska
 
-## A Repo created to explore usage of node and turf.js focusing on the distribution and proposed buffer zones of Ampibia for Alaska and if their range is impacted by observed damage caused by Douglas-fir beetles.
+## A Repo created to explore usage of node and turf.js focusing on the distribution and proposed buffer zones of Rough Skin Newt and Western Toad for Alaska and if their range is impacted by observed damage caused by Douglas-fir beetles.
 
 ## TOC
 - [](#words-words)
@@ -46,8 +46,12 @@ Initial Exploration of Files in command module using ogrinfo
     - 16 Attributes (STATEFP; PLACEFP; PLACENS; GEOID; NAME; NAMELSAD; LSAD; CLASSFP; PCICBSA; PCINECTA; MTFCC; FUNCSTAT; ALAND; AWATER; INTPTLAT; INTPTLON) 
 - IDS Points (Insect_and_Disease_Survey.csv) 
 
+Secondary Exploration of Files in command module using mapshaper
+*insert mapshaper image here*
 
 ### Processing
+
+#### Douglas-Fir Beetle Damage Files
 Install npm packages:
 - npm install @turf/turf
 - npm install chalk
@@ -58,4 +62,33 @@ Write scripts to process/filter/reduce file size of data
 - process-csv-ids.js to filter out all points of IDS damage except those corresponding to Douglas Fir Beetles (47798 features filtered; resulting json file 6.3 MB)
 
 - create-hex.js to create hexagon layer bounded over alaska (198 hexagons; 49 KB)
+
+#### Amphibia Files
+Transform shapefiles projection from NAD 83 to WGS 84 (EPSG: 4326) using ogr2ogr in command prompt.
+
+Transform shapefiles to geojson, filter fields, reduce and simplify using mapshaper in command prompt (example):
+`mapshaper RoughskinNewt4326.shp -filter-fields HUC_CODES,OCCURRENCE,SCI_NAME,SEASON, -simplify dp 30% -o format=geojson RoughskinNewt4326simpl.json`
+(roughskinnewt4326simpl.json = 9.43 KB)
+(westerntoad4326simpl.json = 1.7 MB)
+
+Transform shapefiles to geojson just as above but include precision reduction
+`mapshaper RoughskinNewt4326.shp -filter-fields HUC_CODES,OCCURRENCE,SCI_NAME,SEASON, -simplify dp 30% -o precision=.0001 format=geojson RoughskinNewt4326simpl_precis.json`
+(roughskinnewt4326simpl_precis.json = 4.69 KB)
+(westerntoad4326simpl_precis.json = 8.5 KB)
+
+Transform shapefiles to geojson just at above but instead of geojson use topojson to further reduce file size
+`mapshaper RoughskinNewt4326.shp -filter-fields HUC_CODES,OCCURRENCE,SCI_NAME,SEASON, -simplify dp 30% -o precision=.0001 format=topojson roughskinnewt4326simpl_precis_topo.json`
+(roughskinnewt4326simple_precis_topo.json = 2.16 KB)
+(westerntoad4326simpl_precis_topo.json = 3.75 KB)
+
+Rough Skin Newt & Western Toad Files transformed fine.
+Rough Skin Newt Initial: 1.24 MB
+Rough Skin Newt Final: 2.16 KB
+
+Western Toad Initial: 2.24 MB
+Western Toad Final: 3.75 KB
+
+Wood Frog had issues, reference wood frog error graphic to return and refine at a later date.
+Will continue on with Rough Skin Newt & Western Toad files. 
+
 
