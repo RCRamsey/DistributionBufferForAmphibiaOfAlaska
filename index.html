@@ -4,11 +4,8 @@
   <head>
     <meta charset="utf-8" />
 
-    <title>Intensity of Douglas-Fir Beetle Hexgrid Damage</title>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-    />
+    <title>Douglas-Fir Beetle Impact on Alaskan Amphibians</title>
+    <link href='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.css' rel='stylesheet' />
 
     <style>
       body {
@@ -29,8 +26,10 @@
   <body>
     <div id="map"></div>
 
+    <script src="https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js"></script>
     <script src="https://d3js.org/d3-fetch.v1.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.0.6/chroma.min.js"></script>
 
 
@@ -42,17 +41,28 @@
         zoom: 4.5
       });
 
-      // add a basemap of tiles
+      // mapbox access token
+      var accessToken = "pk.eyJ1IjoicmNyYW1zZXkiLCJhIjoiY2t3M3Fxem5kNXcxbjJubzA2YTBxbTU0eiJ9.R2gez_cyZLVgkYvAs0r4OA";
+
+      // add mapbox tile layers using access token
       L.tileLayer(
-        "https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png",
+        "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=" +
+          accessToken,
         {
-          maxZoom: 18,
           attribution:
-            '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy;<a href="https://carto.com/attribution">CARTO</a>'
+            '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>',
+            tileSize:512,
+            maxZoom: 18,
+            zoomOffset: -1,
+          id: 'mapbox/light-v10', 
+          accessToken: accessToken
         }
       ).addTo(map);
 
-      // request our js file
+      
+        
+      
+        // hex grid of douglas-fir beetle damage
       d3.json("data/ak-hexgrid.json").then(function(data) {
         // loop through all the hex features and push counts to an array
         const counts = [];
@@ -64,11 +74,17 @@
           }
         });
 
-        drawMap(data, counts);
+        // request our ampibian data files
+        const newt = d3.json ('data/roughskinnewt4326simpl_precis_topo.json')
+        const toad = d3.json ('data/westerntoad4326simpl_precis_topo.json')
+
+        drawMap(data, counts, newt, toad);
       });
 
-      function drawMap(data, counts) {
+      function drawMap(data, counts, newt, toad) {
         
+        console.log (newt);
+        console.log (toad);
         // // map options
         // var options = {
         //   // style the hexagons
