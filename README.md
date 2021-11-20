@@ -44,7 +44,7 @@ Initial Exploration of Files in command module using ogrinfo
     - Feature Count: 355
     - PROJCRS NAD 83 (EPSG 4269)
     - 16 Attributes (STATEFP; PLACEFP; PLACENS; GEOID; NAME; NAMELSAD; LSAD; CLASSFP; PCICBSA; PCINECTA; MTFCC; FUNCSTAT; ALAND; AWATER; INTPTLAT; INTPTLON) 
-- IDS Points (Insect_and_Disease_Survey.csv)
+- IDS Points (Insect_and_Disease_Survey.csv) 
 
 
 ### Processing
@@ -55,5 +55,6 @@ Install npm packages:
 - npm install geojson-validation
 
 Write scripts to process/filter/reduce file size of data
-- process-csv-ids.js to filter out all points except those corresponding to Douglas Fir Beetles
+- process-csv-ids.js to filter out all points of IDS damage except those corresponding to Douglas Fir Beetles (47798 features filtered; resulting json file 6.3 MB from previous 89.1 MB) 
+- create-hex.js to create hexagon layer bounded over alaska (198 hexagons; 49 KB)
 
