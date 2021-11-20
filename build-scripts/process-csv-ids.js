@@ -11,7 +11,7 @@ const outFilePath = __dirname + "/../data/ak_ids_douglas_fir_beetle.json";
 const filteredFeature = "Douglas-fir beetle";
 
 csv({
-    delimiter: "|"
+    delimiter: ","
   })
     .fromFile(inFilePath)
     .then(jsonObj => {
@@ -38,7 +38,7 @@ csv({
         let featureCount = 0; // counter variable to keep track below
 
         jsonObj.forEach(obj => {
-            if (obj.FEATURE_CLASS === filteredFeature) {
+            if (obj.DCA_COMMON_NAME === filteredFeature) {
                 // build a GeoJSON feature for each
                 // following the GeoJSON specification (i.e., lon, lat)
                 feature = {
@@ -49,7 +49,7 @@ csv({
                     },
                     
                     properties: {
-                        FEATURE_NAME: obj.DAMAGE_POINT_ID
+                       OBJECTID : obj.OBJECTID
                     }
                 };
                 // push the feature into the features array
@@ -74,7 +74,7 @@ csv({
             console.log(chalk.green("this is valid GeoJSON!"));
             writeToFile(geojson); //call to write to file function
         } else {
-            console.log(chalk.red("Sorry, not valid GeoJSON, try again."));
+            console.log(chalk.red("Sorry, not valid GeoJSON."));
         }
       }// end validateGeoJson()function
       
