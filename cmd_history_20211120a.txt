@@ -1,0 +1,50 @@
+cd .> index.html
+cd .> package.json
+cd project-files
+dir
+cd RoughskinNewt_AnnualRange
+dir
+ogrinfo -so RoughskinNewt_AnnualRange.shp RoughskinNewt_AnnualRange
+cd ..
+dir
+cd WesternToad_AnnualRange
+dir
+ogrinfo -so WesternToad_AnnualRange.shp WesternToad_AnnualRange
+cd ..
+dir
+cd WoodFrog_AnnualRange
+dir
+ogrinfo -so WoodFrog_AnnualRange.shp WoodFrog_AnnualRange
+cd ..
+npm init
+npm install @turf/turf
+npm install chalk
+ npm install csvtojson
+npm install geojson-validation
+cd project-files
+dir
+cd tl_2021_02_place
+dir
+ogrinfo tl_2021_02_place.shp tl_2021_02_place
+dir
+ogrinfo -so tl_2021_02_place.shp tl_2021_02_place
+cd ..
+dir
+cd tl_2021_02_place
+dir
+cd ..
+dir
+cd ..
+cd project-files
+dir
+cd ..
+dir
+cd build-scripts
+dir
+node process-csv-ids.js
+cd
+node process-csv-ids.js
+node process-csv.ids.js
+node process-csv-ids.js
+cd ..
+doskey /h > cmd_history_20211120a.txt
