@@ -11,7 +11,7 @@ const outFilePath = __dirname + "/../data/ak_ids_douglas_fir_beetle.json";
 const filteredFeature = "Douglas-fir beetle";
 
 csv({
-    delimiter: ","
+    delimiter: "|"
   })
     .fromFile(inFilePath)
     .then(jsonObj => {
