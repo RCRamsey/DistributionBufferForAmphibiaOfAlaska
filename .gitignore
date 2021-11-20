@@ -115,11 +115,14 @@ dist
 *.zip
 *.sbn
 *.sbx
+*.cpg
+*.shp.ea.iso.xml
+*.shp.iso.xml
 
 # Dependency directories
 node_modules/
 
 # Large Files
-
+project-files/Insect_and_Disease_Survey.csv
 project-files/CO_Features_20210825.txt
 project-files/CO_Features.zip
