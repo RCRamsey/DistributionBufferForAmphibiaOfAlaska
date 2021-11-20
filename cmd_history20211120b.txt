@@ -1,0 +1,34 @@
+dir
+cd Documents
+dir
+cd map675_2onward
+dir
+cd DistributionBufferForAmphibiaOfAlaska
+cd data
+dir
+cd ..
+cd build-scripts
+dir
+node process-csv-ids.js
+node create-hex.js
+cd ..
+cd data
+dir
+cd ..
+cd project-files
+dir
+cd ..
+cd build-scripts
+node create-hex.js
+cd ...
+cd ..
+cd data
+dir
+mapshaper -v
+cd ..
+dir
+cd project-files
+dir
+ogr2ogr -f "GeoJSON" -select DCA_COMMON_NAME,OBJECTID ak_ids_douglas_fir_beetle_min.json ak_ids_douglas_fir_beetle.json
+cd..
+doskey /h > cmd_history20211120b.txt

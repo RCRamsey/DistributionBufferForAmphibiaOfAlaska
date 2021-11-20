@@ -55,6 +55,7 @@ Install npm packages:
 - npm install geojson-validation
 
 Write scripts to process/filter/reduce file size of data
-- process-csv-ids.js to filter out all points of IDS damage except those corresponding to Douglas Fir Beetles (47798 features filtered; resulting json file 6.3 MB from previous 89.1 MB) 
+- process-csv-ids.js to filter out all points of IDS damage except those corresponding to Douglas Fir Beetles (47798 features filtered; resulting json file 6.3 MB)
+
 - create-hex.js to create hexagon layer bounded over alaska (198 hexagons; 49 KB)
 
