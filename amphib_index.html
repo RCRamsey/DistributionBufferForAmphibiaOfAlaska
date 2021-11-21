@@ -91,8 +91,14 @@
     </section>
     <script src="https://d3js.org/d3-fetch.v1.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.0.6/chroma.min.js"></script>
 
+    <!-- D3 graphing library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.0.6/chroma.min.js"></script>
+    <!-- D3 topojson library -->
+    <script src="https://unpkg.com/topojson@3"></script>
+
+    <!-- Turf library -->
+    <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
 
     <script>
       // create Leaflet map, centered on Alaska
@@ -136,55 +142,34 @@
         // convert topojson to geojson by drilling down to attribute
         const newtGeoJson = topojson.feature(newtData, {
             type: 'GeometryCollection',
-            geometries: newtData.objects.collection.geometries 
+            geometries: newtData.objects.RoughskinNewt4326 
         });
         console.log(newtGeoJson)
         
-        // // map options
-        // var options = {
-        //   // style the hexagons
-        //   style: function(feature, layer) {
-        //     return {
-        //       color: "white",
-        //       weight: 2,
-        //       fillColor: "steelblue",
-        //       fillOpacity: 1
-        //     };
-        //   },
+        // declare a geographic path generator
+        // fit the extent to the width and height using the geojson
+        const projection = d3.geoAlbers() 
         
-        //  // use chroma.limits to determine
-        //   const breaks = chroma.limits(counts, 'k', 9);
+        //declare a path generator using the projection
+        const path = d3.geoPath()
+            .projection(projection);
 
-        // // build a colorize function
-        //   const colorize = chroma
-        //                   .scale(['#c4d4bc', '#395522'])
-        //                   .domain(breaks)
-        //                   .mode('lch')
-        //                   .correctLightness();
+        // create the Leaflet map using the topo transformed to geojson data
+        L.geoJSON(data).addTo(map);
 
-        // style the hexagons with data counts
-            var options = {
-                style: function(feature, layer) {
-                    return {
-                    color: 'white',
-                    weight: 2,
-                    fillColor: colorize(feature.properties.count),
-                    fillOpacity: 1
-                    }
-                },
-
-                onEachFeature: function(feature, layer) {
-                    // attach a tooltip to each
-                    layer.bindTooltip("# of summits: " + feature.properties.count);
-                },
-                filter: function(feature) {
-                    if (feature.properties.count) return feature;
-                }
-            };
-
-        // create the Leaflet map using the hexgrid geojson data
-        L.geoJSON(data, options).addTo(map);
       }
+        // convert leaflet layer for (both newt and toad as
+        // amphibBuffer treated as one data set) to GeoJson so turf will work with it
+        // set the buffer to 300 meters 
+        const amphibBuffer = turf.buffer(layer.toGeoJSON(), 0.3, 'kilometers');
+        const amphibJsonBuffer = L.geoJSON(amphibLyrBuffer, {
+                style: {
+                    color: 'yellow',
+                    dashArray: '5,5',
+                    fillOpactiy: 0
+                }
+        }).addTo(map);
+      
 
       var button = document.querySelector('#info')
 		  var about = document.querySelector('#about')
@@ -201,6 +186,7 @@
 				    button.style.color = '#3d3d3d'
 			    }
 		    })
+        
     </script>
   </body>
 </html>
