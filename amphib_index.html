@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
 
-    <title>AK Amphibia Range & Buffer</title>
+    <title>AK Amphibia Ranges & Buffers</title>
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
@@ -22,12 +22,13 @@
       position: absolute;
       z-index: 650;
       top: 10px;
-      right: 10px;
+      /* left: 25%; */
+      right: 25%;
       padding: 8px 15px;
       margin: 0;
-      color: whitesmoke;
-      font-size: 2.8em;
-      background:rgba(57, 85, 34, .9);
+      color: rgb(14, 19, 97);
+      font-size: 1.9em;
+      background:rgba(193, 197, 190, 0.9);
       border-radius: 5px;
     }
 
@@ -46,9 +47,9 @@
         width: 300px;
         padding: 0 15px;
         /* Add styles to match Leaflet UI elements */
-        background: rgba(57, 85, 34, .3);
+        background:rgba(193, 197, 190, 0.9);
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-        color: whitesmoke;
+        color: rgb(14, 19, 97);
         border: 1px solid #ddd;
         border-radius: 5px;
         z-index: 800;
@@ -74,7 +75,7 @@
   </head>
 
   <body>
-    <h1>Two Amphibia Alaskan Range and Buffer Zones</h1>
+    <h1>Two Amphibia Alaskan Ranges and Buffer Zones</h1>
     <div id="map"></div>
 
     <button id='info'>Info</button>
@@ -104,17 +105,17 @@
       // create Leaflet map, centered on Alaska
       var map = L.map("map", {
         zoomSnap: 0.1,
-        center: [64.2008, -149.4937],
-        zoom: 4.5
+        center: [59.2008, -149.4937],
+        zoom: 4.6
       });
 
       // add a basemap of tiles
       L.tileLayer(
-        "https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png",
+        "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",
         {
           maxZoom: 20,
           attribution:
-            '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+            'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>'
         }
       ).addTo(map);
 
