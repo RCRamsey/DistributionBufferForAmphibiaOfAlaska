@@ -82,14 +82,14 @@
 
     <section id="about">
       <!--id attribute "about" holds the content-->
-      <h2>Looking out For Kermit's Friends</h2>
+      <h2>Looking out For Newts</h2>
       <p>Zoom in to explore the habitat range for 
-          Rough-Skinned Newts of Alaska .
+          Rough-Skinned Newts of Alaska.
           A proposed buffer zone of 5 km is added as a suggestion
           zone to prevent impact of their habitat. 
       </p>
-      <p>Original Amphibian Range Data downloaded from <a href="http://akgap.uaa.alaska.edu/species-data/">Alaska Center for Conservation Science</a>
-      and filtered for.</div> Locations of damaged forests caused by insect, disease and other abiotic agents pulled from 
+      <p>Original Newt Range Data downloaded from <a href="http://akgap.uaa.alaska.edu/species-data/">Alaska Center for Conservation Science</a>
+      and filtered for locations of damaged forests caused by insect, disease and other abiotic agents pulled from 
       <a href ="https://gis.data.alaska.gov/search?collection=Dataset&q=point">IDS Points U.S. Forest Service</a></p>
       <p>Map authored by <a href="https://github.com/RCRamsey">RC Ramsey</a></p>
 
@@ -104,13 +104,11 @@
     <script src="https://cdn.jsdelivr.net/npm/d3-array@3"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-geo@3"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-geo-projection@4"></script>
-
     <!-- D3 graphing library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.0.6/chroma.min.js"></script>
     <!-- D3 topojson library -->
     <script src="https://unpkg.com/topojson@3"></script>
-
-    <!-- Turf library -->
+    <!-- Turf minified library -->
     <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
 
     <script>
@@ -154,12 +152,13 @@
           const rustLayers= L.geoJSON(rustData).addTo(map); 
           
           // add points for locations of spruce beetle damage occurs
+          // const beetleLayers = L.geoJSON(beetleData).addTo(map);
+
           // discover there are locations outside of Alaska where damage occurs
-          // use turf to find the bbox of the newt habitat
-          const beetleLayers = L.geoJSON(beetleData)
+          // create bounding box from newt data
           const newtBbox = turf.bbox(newtData)
+          //clip beetle damage to only spaces within the newt bounding box and add to map
           const beetleClipped = turf.bboxClip(beetleLayers, newtBbox)
-          
           beetleClipped.addTo(map);
 
           // convert topojson to geojson by drilling down to attribute
@@ -168,6 +167,7 @@
               newtData.objects.RoughskinNewt4326 
           );
             //console.log(newtGeoJson)
+            
           // create the Leaflet map using the topo transformed to geojson data
           const newtLayers = L.geoJSON(newtGeoJson).addTo(map);
           // create empty layer group to receive newtBuffer as the method
@@ -179,6 +179,7 @@
             // console.log(layer.toGeoJSON());
             // layer.feature.properties to access tooltip data
 
+            // use let because unclear if will have issues as it loops when using 'const'
             let amphibBuffer = turf.buffer(layer.toGeoJSON(), 5, {
               units: 'kilometers'}
               );

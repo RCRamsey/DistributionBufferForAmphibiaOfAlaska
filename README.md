@@ -1,6 +1,6 @@
 # DistributionBufferForAmphibiaOfAlaska
 
-## A Repo created to explore usage of node and turf.js focusing on the distribution and proposed buffer zones of Rough Skin Newts for Alaska. Further data was used to determine if their buffered habitat is more likely to be impacted by observed damage caused by Spruce Broom Rust or a Spruce Beetle.
+## A Repo created to explore usage of node and turf.js focusing on the distribution and proposed buffer zones of Rough Skin Newts for Alaska. Further data was used to determine if their buffered habitat is more likely to be impacted by observed damage caused by Spruce Broom Rust or a Spruce Beetle based on proximity to layers.
 
 ## TOC
 - [Data](#Data)
@@ -60,7 +60,7 @@ Transform shapefiles to geojson just as above but instead of geojson use topojso
 `mapshaper RoughskinNewt4326.shp -filter-fields HUC_CODES,OCCURRENCE,SCI_NAME,SEASON, -simplify dp 30% -o precision=.0001 format=topojson roughskinnewt4326simpl_precis_topo.json`  
 (roughskinnewt4326simple_precis_topo.json = 2.16 KB)  
 
-Rough Skin Newt & Western Toad Files transformed fine.  
+Rough Skin Newt   
 Rough Skin Newt Initial: 1.24 MB  
 Rough Skin Newt Final: 2.16 KB  
 
