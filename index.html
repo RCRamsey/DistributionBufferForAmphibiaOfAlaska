@@ -75,13 +75,13 @@
         });
 
         // request our ampibian data files
-        const newt = d3.json ('data/roughskinnewt4326simpl_precis_topo.json')
-        const toad = d3.json ('data/westerntoad4326simpl_precis_topo.json')
+        //const newt = d3.json ('data/roughskinnewt4326simpl_precis_topo.json')
+        //const toad = d3.json ('data/westerntoad4326simpl_precis_topo.json')
 
-        drawMap(data, counts, newt, toad);
+        drawMap(data, counts);
       });
 
-      function drawMap(data, counts, newt, toad) {
+      function drawMap(data, counts) {
         
         console.log(data);
         // // map options
