@@ -94,8 +94,15 @@
 
   
     </section>
-    <script src="https://d3js.org/d3-fetch.v1.min.js"></script>
+    <!-- leaflet library -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- D3 for topo to geojson -->
+    <script src="https://d3js.org/d3-fetch.v1.min.js"></script>
+    <!-- D3 geoprojection libraries -->
+    <script src="https://github.com/d3/d3-geo-projection"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-array@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-geo@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-geo-projection@4"></script>
 
     <!-- D3 graphing library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.0.6/chroma.min.js"></script>
@@ -126,9 +133,10 @@
       // request our js files to create promise
       const newtTopoJson = d3.json("data/roughskinnewt4326simpl_precis_topo.json")
       const toadTopoJson = d3.json("data/westerntoad4326simpl_precis_topo.json")
+      const rustJson = d3.json("data/ak_ids_spruce_broom_rust.json")
       
       // wait until all data is loaded then send to draw map function to complete promise
-      Promise.all([newtTopoJson, toadTopoJson]).then(drawMap);
+      Promise.all([newtTopoJson, toadTopoJson, rustJson]).then(drawMap);
 
       // accepts data loaded as parameters (in topojson format)
       // all data loaded through the promise will reach here under 
@@ -139,41 +147,67 @@
         // refer to datasets (must define data sets or code breaks)
         const newtData = data[0];
         const toadData = data[1];
+        const rustData = data[2];
 
         // the array features to turn into paths
-        console.log(data[0]);
-        console.log(data[1]);
+        // console.log(data[0]);
+        // console.log(data[1]);
+        console.log(data[2]);
+
+        const mockLayers= L.geoJSON(rustData).addTo(map); 
 
         // convert topojson to geojson by drilling down to attribute
-        const newtGeoJson = topojson.feature(newtData, {
-            type: 'GeometryCollection',
-            geometries: newtData.objects.RoughskinNewt4326 
-        });
+        const newtGeoJson = topojson.feature(newtData, 
+            //type: 'GeometryCollection',
+            newtData.objects.RoughskinNewt4326 
+        );
         console.log(newtGeoJson)
         
-        // declare a geographic path generator
-        // fit the extent to the width and height using the geojson
-        const projection = d3.geoAlbers() 
+        // // declare a geographic path generator
+        // // fit the extent to the width and height using the geojson
+        // const projection = d3.geoAlbers() 
         
-        //declare a path generator using the projection
-        const path = d3.geoPath()
-            .projection(projection);
+        // //declare a path generator using the projection
+        // const path = d3.geoPath()
+        //     .projection(projection);
 
         // create the Leaflet map using the topo transformed to geojson data
-        L.geoJSON(data).addTo(map);
+        const newtLayers = L.geoJSON(newtGeoJson).addTo(map);
 
-      }
+        // create empty layer group to receive newtBuffer as a method
+        // allows access to layer outside of layers scope
+        const newtBufferLayers = L.layerGroup().addTo(map);
+
+        // loop through polygons (treated as individual layers)
+        newtLayers.eachLayer(function(layer){
+           // console.log(layer);
+           // console.log(layer.toGeoJSON());
+
+            // layer.feature.properties to access tooltip data
+
+            let amphibBuffer = turf.buffer(layer.toGeoJSON(), 5, {
+              units: 'kilometers'}
+              );
+            
+              // console.log(amphibBuffer);
+
+            let bufferLayer = L.geoJSON(amphibBuffer, {
+                style: {
+                color: 'yellow',
+                dashArray: '5,5',
+                fillOpactiy: 0
+                }
+            })
+
+        newtBufferLayers.addLayer(bufferLayer)
         // convert leaflet layer for (both newt and toad as
         // amphibBuffer treated as one data set) to GeoJson so turf will work with it
         // set the buffer to 300 meters 
-        const amphibBuffer = turf.buffer(layer.toGeoJSON(), 0.3, 'kilometers');
-        const amphibJsonBuffer = L.geoJSON(amphibLyrBuffer, {
-                style: {
-                    color: 'yellow',
-                    dashArray: '5,5',
-                    fillOpactiy: 0
-                }
-        }).addTo(map);
+        // 
+        
+      })
+    }
+        
       
 
       var button = document.querySelector('#info')
