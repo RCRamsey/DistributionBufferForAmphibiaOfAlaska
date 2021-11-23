@@ -4,8 +4,11 @@
   <head>
     <meta charset="utf-8" />
 
-    <title>Douglas-Fir Beetle Impact on Alaskan Amphibians</title>
-    <link href='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.css' rel='stylesheet' />
+    <title>AK Newt Range & Buffers</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
 
     <style>
       body {
@@ -14,121 +17,201 @@
         padding: 0;
       }
 
+      h1 {
+      /* pulls h1 out of position and makes it absolute in position */
+      position: absolute;
+      z-index: 650;
+      top: 10px;
+      /* left: 25%; */
+      right: 25%;
+      padding: 8px 15px;
+      margin: 0;
+      color: rgb(14, 19, 97);
+      font-size: 1.9em;
+      background:rgba(193, 197, 190, 0.9);
+      border-radius: 5px;
+    }
+
       #map {
         position: absolute;
         width: 100%;
         top: 0;
         bottom: 0;
       }
+
+      /*our "about" section placed on top of the map using CSS*/
+      #about {
+        position: absolute;
+        bottom: 30px;
+        left: 15px;
+        width: 300px;
+        padding: 0 15px;
+        /* Add styles to match Leaflet UI elements */
+        background:rgba(193, 197, 190, 0.9);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        color: rgb(14, 19, 97);
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        z-index: 800;
+      }
+
+      #info {
+			  position: absolute;
+			  margin-top: 0;
+			  font-family: 'Quicksand', sans-serif;
+			  font-weight: 700;
+			  letter-spacing: .04em;
+			  color: #3d3d3d;
+			  padding: 5px 10px;
+			  top: 80px;
+			  left: 10px;
+			  z-index: 1000;
+			  border-radius: 4px;
+			  border: 1px solid #aaa;
+			  background: rgba(256, 256, 256, .3);
+			  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+		  }
     </style>
   </head>
 
   <body>
+    <h1>Rough Skinned Newt Alaskan Range and Buffer Zones</h1>
     <div id="map"></div>
 
-    <script src="https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js"></script>
-    <script src="https://d3js.org/d3-fetch.v1.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
-    <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.0.6/chroma.min.js"></script>
+    <button id='info'>Info</button>
 
+    <section id="about">
+      <!--id attribute "about" holds the content-->
+      <h2>Looking out For Kermit's Friends</h2>
+      <p>Zoom in to explore the habitat range for 
+          Rough-Skinned Newts of Alaska .
+          A proposed buffer zone of 5 km is added as a suggestion
+          zone to prevent impact of their habitat. 
+      </p>
+      <p>Original Amphibian Range Data downloaded from <a href="http://akgap.uaa.alaska.edu/species-data/">Alaska Center for Conservation Science</a>
+      and filtered for.</div> Locations of damaged forests caused by insect, disease and other abiotic agents pulled from 
+      <a href ="https://gis.data.alaska.gov/search?collection=Dataset&q=point">IDS Points U.S. Forest Service</a></p>
+      <p>Map authored by <a href="https://github.com/RCRamsey">RC Ramsey</a></p>
+
+  
+    </section>
+    <!-- leaflet library -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- D3 for topo to geojson -->
+    <script src="https://d3js.org/d3-fetch.v1.min.js"></script>
+    <!-- D3 geoprojection libraries -->
+    <script src="https://github.com/d3/d3-geo-projection"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-array@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-geo@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-geo-projection@4"></script>
+
+    <!-- D3 graphing library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.0.6/chroma.min.js"></script>
+    <!-- D3 topojson library -->
+    <script src="https://unpkg.com/topojson@3"></script>
+
+    <!-- Turf library -->
+    <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
 
     <script>
       // create Leaflet map, centered on Alaska
       var map = L.map("map", {
         zoomSnap: 0.1,
-        center: [64.2008, -149.4937],
-        zoom: 4.5
+        center: [59.2008, -149.4937],
+        zoom: 4.6
       });
 
-      // mapbox access token
-      var accessToken = "pk.eyJ1IjoicmNyYW1zZXkiLCJhIjoiY2t3M3Fxem5kNXcxbjJubzA2YTBxbTU0eiJ9.R2gez_cyZLVgkYvAs0r4OA";
-
-      // add mapbox tile layers using access token
+      // add a basemap of tiles
       L.tileLayer(
-        "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=" +
-          accessToken,
+        "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",
         {
+          maxZoom: 20,
           attribution:
-            '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>',
-            tileSize:512,
-            maxZoom: 18,
-            zoomOffset: -1,
-          id: 'mapbox/light-v10', 
-          accessToken: accessToken
+            'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>'
         }
       ).addTo(map);
 
+      // request our js files to create promise
+      const newtTopoJson = d3.json("data/roughskinnewt4326simpl_precis_topo.json")
+      const rustJson = d3.json("data/ak_ids_spruce_broom_rust.json")
+      const spruceBeetleJson = d3.json("data/ak_ids_spruce_beetle.json")
       
+      // wait until all data is loaded then send to draw map function to complete promise
+      Promise.all([newtTopoJson, rustJson, spruceBeetleJson]).then(drawMap);
+
+      // accepts data loaded as parameters (in topojson format)
+      // all data loaded through the promise will reach here under 
+      // the single argument of data and accessible through the data array 
+      function drawMap(data) {
+        console.log(data)
+
+        // refer to datasets (must define data sets or code breaks)
+        const newtData = data[0];
+          const rustData = data[1];
+            const beetleData = data[2];
+
+          // add points for where locations of spruce rust damage occurs in alaska
+          const rustLayers= L.geoJSON(rustData).addTo(map); 
+          
+          // add points for locations of spruce beetle damage occurs
+          // discover there are locations outside of Alaska where damage occurs
+          // use turf to find the bbox of the newt habitat
+          const beetleLayers = L.geoJSON(beetleData)
+          const newtBbox = turf.bbox(newtData)
+          const beetleClipped = turf.bboxClip(beetleLayers, newtBbox)
+          
+          beetleClipped.addTo(map);
+
+          // convert topojson to geojson by drilling down to attribute
+          const newtGeoJson = topojson.feature(newtData, 
+            //type: 'GeometryCollection',
+              newtData.objects.RoughskinNewt4326 
+          );
+            //console.log(newtGeoJson)
+          // create the Leaflet map using the topo transformed to geojson data
+          const newtLayers = L.geoJSON(newtGeoJson).addTo(map);
+          // create empty layer group to receive newtBuffer as the method
+          // allows access to layer outside of layers scope
+          const newtBufferLayers = L.layerGroup().addTo(map);
+          // loop through polygons (treated as individual layers)
+          newtLayers.eachLayer(function(layer){
+            // console.log(layer);
+            // console.log(layer.toGeoJSON());
+            // layer.feature.properties to access tooltip data
+
+            let amphibBuffer = turf.buffer(layer.toGeoJSON(), 5, {
+              units: 'kilometers'}
+              );
+              // console.log(amphibBuffer);
+            let bufferLayer = L.geoJSON(amphibBuffer, {
+                style: {
+                color: 'yellow',
+                dashArray: '5,5',
+                fillOpactiy: 0
+                }
+            })
+
+          newtBufferLayers.addLayer(bufferLayer)
+          })
+
+    }
         
-      
-        // hex grid of douglas-fir beetle damage
-      d3.json("data/ak-hexgrid2.json").then(function(data) {
-        // loop through all the hex features and push counts to an array
-        const counts = [];
-
-        // loop through the feature data
-        data.features.forEach(function(feature) {
-          if(feature.properties.count > 0) {
-            counts.push(feature.properties.count);
-          }
-        });
-
-        // request our ampibian data files
-        //const newt = d3.json ('data/roughskinnewt4326simpl_precis_topo.json')
-        //const toad = d3.json ('data/westerntoad4326simpl_precis_topo.json')
-
-        drawMap(data, counts);
-      });
-
-      function drawMap(data, counts) {
+      var button = document.querySelector('#info')
+		  var about = document.querySelector('#about')
+		  var clicked = false
+		  button.addEventListener('click', function () {
+			  clicked = !clicked
+			    if (clicked) {
+				    about.style.visibility = 'hidden'
+				    button.style.backgroundColor = '#aaa'
+				    button.style.color = '#fff'
+			    } else {
+				    about.style.visibility = 'inherit'
+				    button.style.background = 'rgba(256, 256, 256, .3)'
+				    button.style.color = '#3d3d3d'
+			    }
+		    })
         
-        console.log(data);
-        // // map options
-        // var options = {
-        //   // style the hexagons
-        //   style: function(feature, layer) {
-        //     return {
-        //       color: "white",
-        //       weight: 2,
-        //       fillColor: "steelblue",
-        //       fillOpacity: 1
-        //     };
-        //   },
-        
-         // use chroma.limits to determine
-          const breaks = chroma.limits(counts, 'k', 9);
-
-        // build a colorize function
-          const colorize = chroma
-                          .scale('OrRd')
-                          .domain(breaks)
-                          .mode('lch')
-                          .correctLightness();
-
-        // style the hexagons with data counts
-          var options = {
-            style: function(feature, layer) {
-            return {
-              color: 'white',
-              weight: 2,
-              fillColor: colorize(feature.properties.count),
-              fillOpacity: 1
-            }
-          },
-
-          onEachFeature: function(feature, layer) {
-            // attach a tooltip to each
-            layer.bindTooltip("# of Douglas-Fir Beetle Damage Incidents: " + feature.properties.count);
-          },
-          filter: function(feature) {
-            if (feature.properties.count) return feature;
-          }
-        };
-
-        // create the Leaflet map using the hexgrid geojson data
-        L.geoJSON(data, options).addTo(map);
-      }
     </script>
   </body>
 </html>
