@@ -152,15 +152,18 @@
           const rustLayers= L.geoJSON(rustData).addTo(map); 
           
           // add points for locations of spruce beetle damage occurs
-          // const beetleLayers = L.geoJSON(beetleData).addTo(map);
+           const beetleLayers = L.geoJSON(beetleData).addTo(map);
 
+          // attempt to clip using turf- not working as expected. comment out to return to.
           // discover there are locations outside of Alaska where damage occurs
           // create bounding box from newt data
-          const newtBbox = turf.bbox(newtData)
+          // const newtBbox = turf.bbox(newtData)
           //clip beetle damage to only spaces within the newt bounding box and add to map
-          const beetleClipped = turf.bboxClip(beetleLayers, newtBbox)
-          beetleClipped.addTo(map);
+          // const beetleClipped = turf.bboxClip(beetleLayers, newtBbox)
+          // beetleClipped.addTo(map);
 
+          //////////////////////////////////////////////////////////////////////////////////////////
+          // accessing newt data in GeoJson format and adding buffer 
           // convert topojson to geojson by drilling down to attribute
           const newtGeoJson = topojson.feature(newtData, 
             //type: 'GeometryCollection',
@@ -173,27 +176,43 @@
           // create empty layer group to receive newtBuffer as the method
           // allows access to layer outside of layers scope
           const newtBufferLayers = L.layerGroup().addTo(map);
+          
           // loop through polygons (treated as individual layers)
-          newtLayers.eachLayer(function(layer){
-            // console.log(layer);
-            // console.log(layer.toGeoJSON());
-            // layer.feature.properties to access tooltip data
+            newtLayers.eachLayer(function(layer){
+              // console.log(layer);
+              // console.log(layer.toGeoJSON());
+              // layer.feature.properties to access tooltip data
 
-            // use let because unclear if will have issues as it loops when using 'const'
-            let amphibBuffer = turf.buffer(layer.toGeoJSON(), 5, {
-              units: 'kilometers'}
-              );
-              // console.log(amphibBuffer);
-            let bufferLayer = L.geoJSON(amphibBuffer, {
-                style: {
-                color: 'yellow',
-                dashArray: '5,5',
-                fillOpactiy: 0
-                }
+              // use let because unclear if will have issues as it loops when using 'const'
+              let amphibBuffers = turf.buffer(layer.toGeoJSON(), 5, {
+                units: 'kilometers'}
+                );
+                // console.log(amphibBuffer);
+              let bufferLayer = L.geoJSON(amphibBuffers, {
+                 style: {
+                  color: 'yellow',
+                 dashArray: '5,5',
+                  fillOpactiy: 0
+                  }
+              })
+
+              newtBufferLayers.addLayer(bufferLayer)
             })
 
-          newtBufferLayers.addLayer(bufferLayer)
-          })
+          ////////////////////////////////////////////////////////////////////////////////////////
+          // access beetle impact point data and use turf booleanPointInPolygon
+          // to style the newt range polygon if beetle point impact exists within polygon
+          // based on presence or absence of beetle impact within buffer.
+          
+          // create fictitious point for proof of concept
+          var pt = turf.point([-77, 44]);
+
+          // access buffer polygons to test point against
+          var poly = newtBufferLayers;
+          console.log(amphibBuffers);
+          
+          //call booleanPointInPolygon method
+          turf.booleanPointInPolygon(pt, poly);
 
     }
         
