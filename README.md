@@ -1,6 +1,6 @@
 # DistributionBufferForAmphibiaOfAlaska
 
-## A Repo created to explore usage of node and turf.js focusing on the distribution and proposed buffer zones of Rough Skin Newts for Alaska. Further data was used to determine if their buffered habitat is more likely to be impacted by observed damage caused by Spruce Broom Rust or a Spruce Beetle based on proximity to layers.
+ A Repo created to explore usage of node and turf.js focusing on the distribution and proposed buffer zones of Rough Skin Newts for Alaska. Further data was used to determine if their buffered habitat is more likely to be impacted by observed damage caused by Spruce Broom Rust or a Spruce Beetle based on proximity to layers.
 
 ## TOC
 - [Data](#Data)
